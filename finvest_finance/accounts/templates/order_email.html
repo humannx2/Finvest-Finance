@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #000;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #0d1b2a;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header img {
+            max-width: 150px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .content h1 {
+            color: #0d1b2a;
+        }
+
+        .summary {
+            margin: 20px 0;
+        }
+
+        .summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary th, .summary td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .summary th {
+            background-color: #f8f9fa;
+        }
+
+        .payment-instructions {
+            margin-top: 20px;
+            background-color: #fffbe6;
+            padding: 15px;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+        }
+
+        .footer {
+            background-color: #0d1b2a;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #28a745;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background-color: #218838;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="{{ logo_url }}" alt="Faang Finvest Logo">
+            <h1>FAANG FINVEST PRIVATE LIMITED</h1>
+            <p>www.faanfinvest.com</p>
+        </div>
+
+        <div class="content">
+            <h1>Dear {{ user_name }},</h1>
+            <p>Greetings of the day!</p>
+            <p>This is an automated message confirming your interest in purchasing shares through FaangFinvest.com.</p>
+
+            <h2>Order Summary</h2>
+            <div class="summary">
+                <table>
+                    <tr>
+                        <th>Share</th>
+                        <th>Order Date</th>
+                        <th>Type</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr>
+                        <td>{{ share_name }}</td>
+                        <td>{{ order_date }}</td>
+                        <td>{{ order_type }}</td>
+                        <td>{{ qty }}</td>
+                        <td>{{ price }}</td>
+                        <td>{{ total_amount }}</td>
+                    </tr>
+                </table>
+                <p>Total Investment Amount = {{ price }} x {{ qty }} = ₹{{ total_investment }}/-</p>
+            </div>
+
+            <h2>Payment Instructions</h2>
+            <div class="payment-instructions">
+                <p>To confirm the deal, kindly make the payment within the next 4 hours. Below are the bank details for the transfer:</p>
+                <p>
+                    <strong>Bank Details:</strong><br>
+                    • Account Name: Faang Finvest Private Limited<br>
+                    • Account Number: Finvest Account Number <br>
+                    • Bank Name: Bank Name <br>
+                    • Branch: Branch Name <br>
+                    • IFSC Code: Bank IFSC Code <br>
+                </p>
+                <p><strong>Important:</strong></p>
+                <ul>
+                    <li>Ensure the payment is made from the DEMAT account holder’s bank account.</li>
+                    <li>Upload the payment proof on your <a href="https://www.faanfinvest.com/profile">profile</a> once the payment is successful.</li>
+                    <li>Notify your relationship manager once the payment is completed.</li>
+                </ul>
+                
+            </div>
+
+            <p>To proceed with the share transfer, please provide the following:</p>
+            <ul>
+                <li>Client Master Report (CMR) Copy</li>
+                <li>Cancelled Cheque</li>
+                <li>PAN Card Copy</li>
+            </ul>
+
+            <p>Once the payment is confirmed, shares will be transferred on the same day if payment is received before 2:00 PM. Payments received after this time will result in a transfer on the next working day.</p>
+
+            <h2>Deal Confirmation Terms:</h2>
+            <ul>
+                <li>Verify the rate and quantity with your relationship manager.</li>
+                <li>If the buyer terminates the deal, the booking amount will be forfeited.</li>
+                <li>If we are unable to arrange the shares due to unforeseen circumstances, we will refund the booking amount and pay 0.5-1% of the deal amount as a penalty. (On a case-to-case basis)</li>
+            </ul>
+
+            <p>For real-time updates, price changes, research reports, and news on listed and unlisted stocks, join our WhatsApp channel here: <a href="{{ whatsapp_link }}">{{ whatsapp_link }}</a>.</p>
+
+            <p>Thank you for choosing Faang Finvest Private Limited.</p>
+
+            <p>Warm Regards,<br>
+                ClubInvest.in<br>
+                Faang Finvest Private Limited</p>
+
+            <a href="{{ website_url }}" class="button">Visit Our Website</a>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Faang Finvest Private Limited. All rights reserved.</p>
+            <p><a href="{{ unsubscribe_link }}">Unsubscribe</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
