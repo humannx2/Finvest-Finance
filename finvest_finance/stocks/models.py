@@ -2,6 +2,8 @@ from django.db import models
 
 class StockData(models.Model):
     isin = models.CharField(max_length=12, unique=True)  # International Securities Identification Number
+    stock_name = models.CharField(max_length=255)  # Name of the stock
+    stock_symbol = models.CharField(max_length=10)  # Stock symbol (Ticker)
     face_value = models.DecimalField(max_digits=15, decimal_places=2)  # Face value of the stock
     total_share = models.DecimalField(max_digits=20, decimal_places=2)  # Total shares in circulation
     total_income = models.DecimalField(max_digits=20, decimal_places=2)  # Total income
@@ -20,6 +22,7 @@ class StockData(models.Model):
     cashflow_operation = models.DecimalField(max_digits=20, decimal_places=2)  # Cashflow from Operations
     cashflow_financing = models.DecimalField(max_digits=20, decimal_places=2)  # Cashflow from Financing
     average_traded_price = models.DecimalField(max_digits=20, decimal_places=2)  # Average traded price
+
 
     def __str__(self):
         return f"StockData({self.isin})"
