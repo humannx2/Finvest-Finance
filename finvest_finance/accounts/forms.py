@@ -1,5 +1,5 @@
 from django import forms
-from .models import Stock
+from accounts.models import Stock, Profile
 
 
 class OrderForm(forms.Form):
@@ -29,3 +29,9 @@ class OrderForm(forms.Form):
         if price <= 0:
             raise forms.ValidationError("Price must be a positive value.")
         return price
+
+
+class CustomerRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('user', 'phone_number', 'dob')

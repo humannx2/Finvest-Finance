@@ -58,6 +58,7 @@ class Profile(models.Model):
     )
     name = models.CharField(max_length=32, default="Enter your name")
     # email = models.EmailField(unique=True, default="Enter your email")
+    phone_number = models.CharField(max_length=20, blank=True)
     dob = models.DateField(null=True, blank=True)
     is_verified = models.BooleanField(
         default=False
@@ -65,21 +66,27 @@ class Profile(models.Model):
     demat_account = models.CharField(
         max_length=20, unique=True, blank=False
     )  # Demat Account Number
-    pan_card_provided = models.BooleanField(
-        default=False
-    )  # If PAN card is uploaded
+
     pan_card_number = models.CharField(
         max_length=10, unique=True, blank=True, null=True
     )
     pan_card_image = models.URLField(
         default="https://miro.medium.com/v2/resize:fit:1358/1*xMy-08e9N2DuFlhxuWO_sw.jpeg"
     )
+    pan_card_validated = models.BooleanField(
+        default=False
+    )  # If PAN card is uploaded
+
     aadhar_card_image = models.URLField(
         default="https://1.bp.blogspot.com/-jwvQnOCuftw/Xx2KtXfa-NI/AAAAAAAAECs/kJF4B2rSx8ED3qF9g4Puhf7EDL3p6t_5wCLcBGAsYHQ/s2048/aadhar.png"
     )
+    aadhar_card_validated = models.BooleanField(default=False)
+
     bank_statement_image = models.URLField(
         default="https://admeonline.com/wp-content/uploads/2018/07/How-to-get-SBI-account-statement_online-using-internet-banking.png"
     )
+    bank_statement_validated = models.BooleanField(default=False)
+
     total_investment = models.PositiveIntegerField()
 
     created_at = models.DateTimeField(auto_now_add=True)

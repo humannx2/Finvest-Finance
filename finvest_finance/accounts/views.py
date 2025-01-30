@@ -17,6 +17,140 @@ from .serializers import (
 import boto3
 from django.conf import settings
 
+import random
+import string
+from django.middleware.csrf import get_token
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.decorators import api_view
+
+from django.contrib.auth.tokens import (
+    PasswordResetTokenGenerator,
+)
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
+
+from accounts.forms import CustomerRegistrationForm
+from accounts.models import Profile as Customer
+from accounts.serializers import ProfileSerializer as CustomerSerializer
+
+User = get_user_model()
+
+default_token_generator = PasswordResetTokenGenerator()
+
+
+def generate_username(email):
+    # Generate a username based on the email and a random number
+    username_base = email.split("@")[0]
+    # Use the part before the '@' as the base
+    random_suffix = "".join(
+        random.choices(string.ascii_lowercase + string.digits, k=4)
+    )
+    return f"{username_base}_{random_suffix}"
+
+
+@api_view(["POST"])
+def register(request):
+    email = request.data.get("email")
+    password = request.data.get("password")
+
+    # Validate email and password presence
+    if not (email and password):
+        return Response(
+            {"message": "Email and password are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        if User.objects.filter(email=email).first():
+            return Response(
+                {"detail": "User already exists. Please log in."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        user = User.objects.create_user(
+            username=generate_username(email), password=password, email=email
+        )
+    except Exception as e:
+        return Response(
+            {"message": f"Error creating user: {str(e)}"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Process customer registration form
+    form = CustomerRegistrationForm({"user": user, **request.data})
+    if form.is_valid():
+        customer = form.save(commit=False)
+        # customer.user = user
+        customer.save()
+        refresh = RefreshToken.for_user(user)
+        return Response(
+            {
+                "message": "Customer registration successfull.",
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            },
+            status=status.HTTP_201_CREATED,
+        )
+    else:
+        return Response(
+            {"errors": form.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@csrf_exempt
+@api_view(["POST"])
+def login_view(request):
+    email = request.data.get("email")
+    password = request.data.get("password")
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response(
+            {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = authenticate(request, username=user.username, password=password)
+
+    if user is not None:
+        login(request, user)
+        refresh = RefreshToken.for_user(user)
+
+        try:
+            customer = Customer.objects.get(user=user)
+
+            return Response(
+                {
+                    "customer": CustomerSerializer(customer).data,
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Customer.DoesNotExist:
+            return Response(
+                {"message": "User is not a customer"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(
+            {"message": "Login successful", "csrf_token": get_token(request)},
+            status=status.HTTP_200_OK,
+        )
+    else:
+        return Response(
+            {"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@csrf_exempt
+@api_view(["POST"])
+def logout_view(request):
+    logout(request)
+    return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+
 
 @method_decorator(login_required, name='dispatch')
 class OrderView(View):
@@ -25,7 +159,7 @@ class OrderView(View):
 
         if form.is_valid():
             # Retrieve the authenticated user's name
-            user = request.user
+            user: User = request.user
             # Get stock data
             stock_symbol = form.cleaned_data['stock_symbol']
             # order_type = form.cleaned_data['order_type']
@@ -35,7 +169,9 @@ class OrderView(View):
 
             # Context data for rendering the email template
             context = {
-                'user_name': user.name,  # Use the user_name from the authenticated user
+                'user_name': getattr(
+                    user, "first_name", ""
+                ),  # Use the user_name from the authenticated user
                 'share_name': stock.stock_name,
                 'order_date': date.today(),
                 'order_type': form.cleaned_data['order_type'],

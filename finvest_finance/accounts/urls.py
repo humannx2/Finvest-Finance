@@ -9,6 +9,15 @@ from .views import (
     PortfolioViewSet,
     TransactionViewSet,
 )
+from .views import (
+    login_view,
+    logout_view,
+    register,
+)
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+    TokenBlacklistView,
+)  # ,TokenObtainPairView
 
 router = DefaultRouter()
 router.register(r'stocks', StockViewSet, basename='stock')
@@ -17,6 +26,11 @@ router.register(r'portfolios', PortfolioViewSet, basename='portfolio')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("login/", login_view, name="login"),
+    path("logout/", logout_view, name="logout"),
+    path("register/", register, name="register"),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/logout/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path('order/', OrderConfirmationView.as_view(), name='order'),
+    path('', include(router.urls)),
 ]
