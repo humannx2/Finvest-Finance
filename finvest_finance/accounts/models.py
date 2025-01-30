@@ -15,7 +15,7 @@ class Portfolio(models.Model):
     stock = models.ForeignKey(
         Stock, on_delete=models.CASCADE
     )  # ForeignKey to Stock
-    quantity = models.PositiveIntegerField()  # Quantity of the stock owned
+    quantity = models.PositiveIntegerField(default=0)  # Quantity of the stock owned
     purchase_price = models.DecimalField(
         max_digits=16, decimal_places=4
     )  # Price at which the stock was purchased
@@ -35,6 +35,7 @@ class Transaction(models.Model):
     stock = models.ForeignKey(
         Stock, on_delete=models.CASCADE
     )  # ForeignKey to Stock
+    payment_id = models.CharField(max_length=64)
     quantity = (
         models.PositiveIntegerField()
     )  # Quantity of the stock bought or sold
@@ -43,8 +44,7 @@ class Transaction(models.Model):
     )  # Price at
     date_of_transaction = models.DateField(blank=True)  # Date of transaction
     transaction_type = models.CharField(max_length=4, choices=[('buy', 'sell')])
-    payment_id = models.CharField(max_length=64)
-    payment_screenshot = models.URLField()
+    payment_screenshot = models.URLField(blank=True,null=True)
     is_valid = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -64,7 +64,7 @@ class Profile(models.Model):
         default=False
     )  # Whether the user is verified
     demat_account = models.CharField(
-        max_length=20, unique=True, blank=False
+        max_length=20, unique=True, blank=True
     )  # Demat Account Number
 
     pan_card_number = models.CharField(
@@ -87,7 +87,7 @@ class Profile(models.Model):
     )
     bank_statement_validated = models.BooleanField(default=False)
 
-    total_investment = models.PositiveIntegerField()
+    total_investment = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
