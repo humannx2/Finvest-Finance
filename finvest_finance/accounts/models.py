@@ -71,6 +71,7 @@ class CustomUser(AbstractUser):
     bank_statement_image = models.URLField(
         default="https://admeonline.com/wp-content/uploads/2018/07/How-to-get-SBI-account-statement_online-using-internet-banking.png"
     )
+    total_investment = models.PositiveIntegerField()
 
     # Specify related_name to avoid reverse accessor clashes
     groups = models.ManyToManyField(

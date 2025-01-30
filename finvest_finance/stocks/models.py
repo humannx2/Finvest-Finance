@@ -7,6 +7,7 @@ class StockData(models.Model):
     )  # International Securities Identification Number
     stock_name = models.CharField(max_length=255)  # Name of the stock
     stock_symbol = models.CharField(max_length=10)  # Stock symbol (Ticker)
+    company_logo = models.URLField(default="https://cdn.logo.com/hotlink-ok/logo-social.png")
     face_value = models.DecimalField(
         max_digits=15, decimal_places=2
     )  # Face value of the stock
