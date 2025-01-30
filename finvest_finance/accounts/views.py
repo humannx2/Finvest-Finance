@@ -4,7 +4,7 @@ from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django import forms
-from .models import StockData
+from .models import Stock
 from datetime import date
 from accounts.forms import OrderForm
 from django.shortcuts import get_object_or_404
@@ -25,7 +25,7 @@ class OrderView(View):
             # order_type = form.cleaned_data['order_type']
             # qty = form.cleaned_data['qty']
             # price = form.cleaned_data['price']
-            stock = get_object_or_404(StockData, stock_symbol=stock_symbol)
+            stock = get_object_or_404(Stock, stock_symbol=stock_symbol)
 
             # Context data for rendering the email template
             context = {

@@ -9,7 +9,10 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('accounts', '0003_remove_portfolio_stock_name_portfolio_stock'),
-        ('stocks', '0002_rename_averagetradedprice_stockdata_average_traded_price_and_more'),
+        (
+            'stocks',
+            '0002_rename_averagetradedprice_stockdata_average_traded_price_and_more',
+        ),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -17,12 +20,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customuser',
             name='aadhar_card_image',
-            field=models.URLField(default='https://1.bp.blogspot.com/-jwvQnOCuftw/Xx2KtXfa-NI/AAAAAAAAECs/kJF4B2rSx8ED3qF9g4Puhf7EDL3p6t_5wCLcBGAsYHQ/s2048/aadhar.png'),
+            field=models.URLField(
+                default='https://1.bp.blogspot.com/-jwvQnOCuftw/Xx2KtXfa-NI/AAAAAAAAECs/kJF4B2rSx8ED3qF9g4Puhf7EDL3p6t_5wCLcBGAsYHQ/s2048/aadhar.png'
+            ),
         ),
         migrations.AddField(
             model_name='customuser',
             name='bank_statement_image',
-            field=models.URLField(default='https://admeonline.com/wp-content/uploads/2018/07/How-to-get-SBI-account-statement_online-using-internet-banking.png'),
+            field=models.URLField(
+                default='https://admeonline.com/wp-content/uploads/2018/07/How-to-get-SBI-account-statement_online-using-internet-banking.png'
+            ),
         ),
         migrations.AddField(
             model_name='customuser',
@@ -37,12 +44,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customuser',
             name='pan_card_image',
-            field=models.URLField(default='https://miro.medium.com/v2/resize:fit:1358/1*xMy-08e9N2DuFlhxuWO_sw.jpeg'),
+            field=models.URLField(
+                default='https://miro.medium.com/v2/resize:fit:1358/1*xMy-08e9N2DuFlhxuWO_sw.jpeg'
+            ),
         ),
         migrations.AlterField(
             model_name='customuser',
             name='email',
-            field=models.EmailField(default='Enter your email', max_length=254, unique=True),
+            field=models.EmailField(
+                default='Enter your email', max_length=254, unique=True
+            ),
         ),
         migrations.AlterField(
             model_name='portfolio',
@@ -50,17 +61,45 @@ class Migration(migrations.Migration):
             field=models.DateField(blank=True),
         ),
         migrations.CreateModel(
-            name='Transactions',
+            name='Transaction',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('quantity', models.PositiveIntegerField()),
-                ('purchase_price', models.DecimalField(decimal_places=2, max_digits=10)),
+                (
+                    'purchase_price',
+                    models.DecimalField(decimal_places=2, max_digits=10),
+                ),
                 ('date_of_transaction', models.DateField(blank=True)),
-                ('transaction_type', models.CharField(choices=[('buy', 'sell')], max_length=4)),
+                (
+                    'transaction_type',
+                    models.CharField(choices=[('buy', 'sell')], max_length=4),
+                ),
                 ('payment_id', models.CharField(max_length=64)),
                 ('payment_screenshot', models.URLField()),
-                ('stock', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transactions', to='stocks.stockdata')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transactions', to=settings.AUTH_USER_MODEL)),
+                (
+                    'stock',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='transactions',
+                        to='stocks.stockdata',
+                    ),
+                ),
+                (
+                    'user',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='transactions',
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

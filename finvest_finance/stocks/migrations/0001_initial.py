@@ -7,33 +7,76 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='StockData',
+            name='Stock',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('ISIN', models.CharField(max_length=12, unique=True)),
-                ('FaceValue', models.DecimalField(decimal_places=2, max_digits=15)),
-                ('TotalShare', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('TotalIncome', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('ProfileAfterTax', models.DecimalField(decimal_places=2, max_digits=20)),
+                (
+                    'FaceValue',
+                    models.DecimalField(decimal_places=2, max_digits=15),
+                ),
+                (
+                    'TotalShare',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'TotalIncome',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'ProfileAfterTax',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
                 ('EPS', models.DecimalField(decimal_places=2, max_digits=20)),
                 ('PE', models.DecimalField(decimal_places=2, max_digits=20)),
                 ('PB', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('MarketCapitalization', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('EnterpriseValue', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('BookValue', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('IntrinsicValue', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('EarningYields', models.DecimalField(decimal_places=2, max_digits=20)),
+                (
+                    'MarketCapitalization',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'EnterpriseValue',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'BookValue',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'IntrinsicValue',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'EarningYields',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
                 ('Sector', models.CharField(max_length=255)),
                 ('SubSector', models.CharField(max_length=255)),
                 ('Category', models.CharField(max_length=255)),
-                ('CashflowOperation', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('CashflowFinancing', models.DecimalField(decimal_places=2, max_digits=20)),
-                ('AverageTradedPrice', models.DecimalField(decimal_places=2, max_digits=20)),
+                (
+                    'CashflowOperation',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'CashflowFinancing',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
+                (
+                    'AverageTradedPrice',
+                    models.DecimalField(decimal_places=2, max_digits=20),
+                ),
             ],
         ),
     ]
