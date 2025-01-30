@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -9,7 +8,13 @@ from datetime import date
 from accounts.forms import OrderForm
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
+
+from accounts.models import Portfolio, Transaction
+from .serializers import (
+    PortfolioSerializer,
+    TransactionSerializer,
+)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -52,33 +57,17 @@ class OrderView(View):
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-    from rest_framework import viewsets, status
-from rest_framework.response import Response
-from stocks.models import Stock, StockValue
-from accounts.models import Portfolio, Transaction
-from .serializers import StockSerializer, StockValueSerializer, PortfolioSerializer, TransactionSerializer
-
-# Stock ViewSet
-class StockViewSet(viewsets.ModelViewSet):
-    """ViewSet for handling CRUD operations for Stock."""
-    queryset = Stock.objects.all()
-    serializer_class = StockSerializer
-
-# StockValue ViewSet
-class StockValueViewSet(viewsets.ModelViewSet):
-    """ViewSet for handling CRUD operations for StockValue."""
-    queryset = StockValue.objects.all()
-    serializer_class = StockValueSerializer
-
 # Portfolio ViewSet
 class PortfolioViewSet(viewsets.ModelViewSet):
     """ViewSet for handling CRUD operations for Portfolio."""
+
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
+
 
 # Transaction ViewSet
 class TransactionViewSet(viewsets.ModelViewSet):
     """ViewSet for handling CRUD operations for Transaction."""
+
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-
