@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 class Stock(models.Model):
@@ -7,7 +8,9 @@ class Stock(models.Model):
     )  # International Securities Identification Number
     stock_name = models.CharField(max_length=255)  # Name of the stock
     stock_symbol = models.CharField(max_length=10)  # Stock symbol (Ticker)
-    company_logo = models.URLField(default="https://cdn.logo.com/hotlink-ok/logo-social.png")
+    company_logo = models.URLField(
+        default="https://cdn.logo.com/hotlink-ok/logo-social.png"
+    )
     face_value = models.DecimalField(
         max_digits=15, decimal_places=2
     )  # Face value of the stock
@@ -65,8 +68,13 @@ class Stock(models.Model):
 
 
 class StockValue(models.Model):
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
+    stock = models.ForeignKey(
+        Stock, on_delete=models.CASCADE, related_name='stock_values'
+    )
     value = models.DecimalField(max_digits=16, decimal_places=2)
+    date = models.DateField(
+        default=date.today
+    )  # Sets the default date to today
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

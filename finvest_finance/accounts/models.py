@@ -8,10 +8,13 @@ User = get_user_model()
 
 class Portfolio(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, related_name='portfolios', null=True
+        User,
+        on_delete=models.SET_NULL,
+        related_name='user_portfolios',
+        null=True,
     )  # Reference to the User model
     stock = models.ForeignKey(
-        Stock, on_delete=models.CASCADE, related_name='portfolios'
+        Stock, on_delete=models.CASCADE
     )  # ForeignKey to Stock
     quantity = models.PositiveIntegerField()  # Quantity of the stock owned
     purchase_price = models.DecimalField(
@@ -25,10 +28,13 @@ class Portfolio(models.Model):
 
 class Transaction(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.SET_NULL, related_name='portfolios', null=True
+        User,
+        on_delete=models.SET_NULL,
+        related_name='user_transactions',
+        null=True,
     )  # Reference to the User model
     stock = models.ForeignKey(
-        Stock, on_delete=models.CASCADE, related_name='portfolios'
+        Stock, on_delete=models.CASCADE
     )  # ForeignKey to Stock
     quantity = (
         models.PositiveIntegerField()
