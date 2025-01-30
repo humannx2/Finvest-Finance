@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="CustomUser",
+            name="Profile",
             fields=[
                 (
                     "id",
@@ -31,7 +31,10 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "password",
+                    models.CharField(max_length=128, verbose_name="password"),
+                ),
                 (
                     "last_login",
                     models.DateTimeField(
@@ -92,10 +95,14 @@ class Migration(migrations.Migration):
                 (
                     "date_joined",
                     models.DateTimeField(
-                        default=django.utils.timezone.now, verbose_name="date joined"
+                        default=django.utils.timezone.now,
+                        verbose_name="date joined",
                     ),
                 ),
-                ("name", models.CharField(default="Enter your name", max_length=32)),
+                (
+                    "name",
+                    models.CharField(default="Enter your name", max_length=32),
+                ),
                 (
                     "email",
                     models.EmailField(
@@ -108,7 +115,9 @@ class Migration(migrations.Migration):
                 ("pan_card_provided", models.BooleanField(default=False)),
                 (
                     "pan_card_number",
-                    models.CharField(blank=True, max_length=10, null=True, unique=True),
+                    models.CharField(
+                        blank=True, max_length=10, null=True, unique=True
+                    ),
                 ),
                 (
                     "pan_card_image",
@@ -134,7 +143,9 @@ class Migration(migrations.Migration):
                 (
                     "groups",
                     models.ManyToManyField(
-                        blank=True, related_name="custom_user_groups", to="auth.group"
+                        blank=True,
+                        related_name="custom_user_groups",
+                        to="auth.group",
                     ),
                 ),
                 (
@@ -176,7 +187,8 @@ class Migration(migrations.Migration):
                 (
                     "stock",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="stocks.stock"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="stocks.stock",
                     ),
                 ),
                 (
@@ -220,7 +232,8 @@ class Migration(migrations.Migration):
                 (
                     "stock",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="stocks.stock"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="stocks.stock",
                     ),
                 ),
                 (

@@ -1,9 +1,8 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractUser
-from stocks.models import Stock
+from django.contrib.auth.models import User
 
-User = get_user_model()
+# from django.contrib.auth.models import AbstractUser
+from stocks.models import Stock
 
 
 class Portfolio(models.Model):
@@ -52,9 +51,13 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class CustomUser(AbstractUser):
+class Profile(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+    )
     name = models.CharField(max_length=32, default="Enter your name")
-    email = models.EmailField(unique=True, default="Enter your email")
+    # email = models.EmailField(unique=True, default="Enter your email")
     dob = models.DateField(null=True, blank=True)
     is_verified = models.BooleanField(
         default=False
@@ -78,18 +81,6 @@ class CustomUser(AbstractUser):
         default="https://admeonline.com/wp-content/uploads/2018/07/How-to-get-SBI-account-statement_online-using-internet-banking.png"
     )
     total_investment = models.PositiveIntegerField()
-
-    # Specify related_name to avoid reverse accessor clashes
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='custom_user_groups',  # Prevents clashes with auth.User.groups
-        blank=True,
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='custom_user_permissions',  # Prevents clashes with auth.User.user_permissions
-        blank=True,
-    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
