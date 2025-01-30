@@ -1,5 +1,5 @@
 from django import forms
-from .models import StockData
+from .models import Stock
 
 
 class OrderForm(forms.Form):
@@ -12,7 +12,7 @@ class OrderForm(forms.Form):
 
     def clean_stock_symbol(self):
         stock_symbol = self.cleaned_data['stock_symbol']
-        if not StockData.objects.filter(stock_symbol=stock_symbol).exists():
+        if not Stock.objects.filter(stock_symbol=stock_symbol).exists():
             raise forms.ValidationError(
                 f"Stock symbol {stock_symbol} does not exist."
             )

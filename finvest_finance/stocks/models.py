@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class StockData(models.Model):
+class Stock(models.Model):
     isin = models.CharField(
         max_length=12, unique=True
     )  # International Securities Identification Number
@@ -60,11 +60,11 @@ class StockData(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"StockData({self.isin})"
+        return f"Stock({self.isin})"
 
 
 class StockValue(models.Model):
-    stock = models.ForeignKey(StockData, on_delete=models.CASCADE)
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     value = models.DecimalField(max_digits=16, decimal_places=2)
 
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-from stocks.models import StockData
+from stocks.models import Stock
 
 User = get_user_model()
 
@@ -11,8 +11,8 @@ class Portfolio(models.Model):
         User, on_delete=models.SET_NULL, related_name='portfolios', null=True
     )  # Reference to the User model
     stock = models.ForeignKey(
-        StockData, on_delete=models.CASCADE, related_name='portfolios'
-    )  # ForeignKey to StockData
+        Stock, on_delete=models.CASCADE, related_name='portfolios'
+    )  # ForeignKey to Stock
     quantity = models.PositiveIntegerField()  # Quantity of the stock owned
     purchase_price = models.DecimalField(
         max_digits=16, decimal_places=4
@@ -23,13 +23,13 @@ class Portfolio(models.Model):
         return f"{self.stock_name.stock_name} - {self.user.username}"  # Display stock name and username
 
 
-class Transactions(models.Model):
+class Transaction(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.SET_NULL, related_name='portfolios', null=True
     )  # Reference to the User model
     stock = models.ForeignKey(
-        StockData, on_delete=models.CASCADE, related_name='portfolios'
-    )  # ForeignKey to StockData
+        Stock, on_delete=models.CASCADE, related_name='portfolios'
+    )  # ForeignKey to Stock
     quantity = (
         models.PositiveIntegerField()
     )  # Quantity of the stock bought or sold
