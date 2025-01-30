@@ -124,16 +124,20 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from stocks.models import Stock, StockValue
-from .serializers import StockSerializer, StockValueSerializer
+from stocks.serializers import StockSerializer, StockValueSerializer
+
 
 # Stock ViewSet
 class StockViewSet(viewsets.ModelViewSet):
     """ViewSet for handling CRUD operations for Stock."""
+
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+
 
 # StockValue ViewSet
 class StockValueViewSet(viewsets.ModelViewSet):
     """ViewSet for handling CRUD operations for StockValue."""
+
     queryset = StockValue.objects.all()
     serializer_class = StockValueSerializer

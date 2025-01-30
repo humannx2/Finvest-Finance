@@ -2,8 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django import forms
-from .models import Stock
+from accounts.models import Stock
 from datetime import date
 from accounts.forms import OrderForm
 from django.shortcuts import get_object_or_404
@@ -15,6 +14,8 @@ from .serializers import (
     PortfolioSerializer,
     TransactionSerializer,
 )
+import boto3
+from django.conf import settings
 
 
 @method_decorator(login_required, name='dispatch')
@@ -71,3 +72,70 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # Process the data for URL fields and file uploads
+        instance = self.perform_uploads(serializer.validated_data)
+
+        # Save the instance
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial
+        )
+        serializer.is_valid(raise_exception=True)
+
+        # Process the data for URL fields and file uploads
+        updated_instance = self.perform_uploads(
+            serializer.validated_data, instance
+        )
+
+        # Save the instance
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
+    def perform_uploads(self, validated_data, instance=None):
+        # If instance is None, we are creating a new object
+        if instance is None:
+            instance = Transaction
+
+        for field_name, file in self.validated_data.items():
+            if isinstance(file, str) and file.startswith('http'):
+                # Skip if it's already a URL
+                continue
+
+            if hasattr(instance, field_name) and isinstance(file, bytes):
+                # Upload the file to S3
+                s3_file_url = self.upload_to_s3(file, field_name, instance)
+                setattr(instance, field_name, s3_file_url)
+
+        # Save the instance with updated file URLs
+        instance.save()
+        return instance
+
+    def upload_to_s3(self, file, field_name, instance):
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_S3_REGION_NAME,
+        )
+
+        # Define the S3 file name and upload
+        s3_file_name = (
+            f"{instance.id}/{field_name}/{file.name}"  # Customize as needed
+        )
+        s3.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, s3_file_name)
+
+        # Construct the S3 file URL
+        s3_file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{s3_file_name}"
+        return s3_file_url
