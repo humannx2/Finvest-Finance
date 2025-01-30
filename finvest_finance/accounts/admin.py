@@ -13,13 +13,11 @@ from .models import Portfolio, Profile
 #     )
 
 
-# @admin.register(Profile)
-# class ProfileAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'username',
-#         'email',
-#         'is_verified',
-#         'demat_account',
-#         'pan_card_provided',
-#         'pan_card_number',
-#     )
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        'is_verified',
+        'demat_account',
+        'pan_card_validated',
+        'pan_card_number',
+    )
