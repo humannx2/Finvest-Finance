@@ -267,9 +267,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         )
 
         # Define the S3 file name and upload
-        s3_file_name = (
-            f"{instance.id}/{field_name}/{file.name}"  # Customize as needed
-        )
+        s3_file_name = f"/profiles/{instance.id}/{field_name}/{file.name}"  # Customize as needed
         s3.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, s3_file_name)
 
         # Construct the S3 file URL
