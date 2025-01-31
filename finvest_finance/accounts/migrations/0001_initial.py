@@ -16,41 +16,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("quantity", models.PositiveIntegerField()),
-                (
-                    "purchase_price",
-                    models.DecimalField(decimal_places=4, max_digits=16),
-                ),
-                ("date_of_purchase", models.DateField(blank=True)),
-                (
-                    "stock",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="stocks.stock"
-                    ),
-                ),
-                (
-                    "user",
-                    models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="user_portfolios",
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
-            ],
-        ),
-        migrations.CreateModel(
             name="Profile",
             fields=[
                 (
