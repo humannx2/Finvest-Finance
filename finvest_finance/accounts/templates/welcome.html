@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Faang Finvest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #000;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #0d1b2a;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header img {
+            max-width: 150px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .content h1 {
+            color: #0d1b2a;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #28a745;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #218838;
+        }
+
+        .footer {
+            background-color: #0d1b2a;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="{{ logo_url }}" alt="Faang Finvest Logo">
+            <h1>FAANG FINVEST PRIVATE LIMITED</h1>
+            <p>www.faanfinvest.com</p>
+        </div>
+
+        <div class="content">
+            <h1>Welcome, {{ user_name }}!</h1>
+            <p>We are delighted to have you on board! Thank you for registering with Faang Finvest Private Limited. You are now part of a growing community of investors who are leveraging our platform for secure and informed investments in both listed and unlisted stocks.</p>
+            
+            <h2>Next Steps</h2>
+            <p>Get started by exploring our platform:</p>
+            <ul>
+                <li><a href="https://www.faanfinvest.com/profile">Update your profile</a> with your latest details.</li>
+                <li>Explore opportunities in the <a href="https://www.faanfinvest.com/investment-options">investment section</a>.</li>
+                <li>Reach out to your relationship manager for personalized assistance.</li>
+            </ul>
+
+            <p>To ensure you don’t miss out on updates, research reports, and market news, join our WhatsApp channel here: <a href="{{ whatsapp_link }}">{{ whatsapp_link }}</a>.</p>
+
+            <a href="{{ website_url }}" class="button">Start Exploring</a>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2025 Faang Finvest Private Limited. All rights reserved.</p>
+            <p><a href="{{ unsubscribe_link }}">Unsubscribe</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
