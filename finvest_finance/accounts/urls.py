@@ -1,16 +1,13 @@
 from django.urls import path, include
-from .views import OrderView
+from accounts.views import OrderView
 from rest_framework.routers import DefaultRouter
-from .views import (
-    # StockViewSet,
-    # StockValueViewSet,
+from accounts.views import (
     PortfolioViewSet,
     TransactionViewSet,
-)
-from .views import (
     login_view,
     logout_view,
     register,
+    cta_form_view,
 )
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
@@ -18,8 +15,6 @@ from rest_framework_simplejwt.views import (
 )  # ,TokenObtainPairView
 
 router = DefaultRouter()
-# router.register(r'stocks', StockViewSet, basename='stock')
-# router.register(r'stock-values', StockValueViewSet, basename='stock-value')
 router.register(r'portfolios', PortfolioViewSet, basename='portfolio')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
 
@@ -30,5 +25,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/logout/', TokenBlacklistView.as_view(), name='token_blacklist'),
     path('order/', OrderView.as_view(), name='order'),
+    path('contact-us/', cta_form_view, name='contact-us'),
     path('', include(router.urls)),
 ]

@@ -134,6 +134,71 @@ class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
 
+    def update(self, request, *args, **kwargs):
+        # Check if the request data contains an array of dictionaries (for bulk update)
+        if isinstance(request.data, list):
+            create_objs = []
+            update_objs = []
+            response_data = []
+
+            # Dynamically get the field names from the first dictionary in the request data
+            field_names = list(request.data[0].keys()) if request.data else []
+
+            for item in request.data:
+                stock_id = item.get('id', None)
+
+                if stock_id:
+                    # If 'id' is provided, try to fetch the existing Stock and prepare for update
+                    # try:
+                    #     stock = Stock.objects.get(id=stock_id)
+                    #     serializer = self.get_serializer(
+                    #         stock, data=item, partial=True
+                    #     )
+                    #     if serializer.is_valid():
+                    #         update_objs.append(stock)
+                    #         response_data.append(serializer.data)
+                    #     else:
+                    #         return Response(
+                    #             serializer.errors,
+                    #             status=status.HTTP_400_BAD_REQUEST,
+                    #         )
+                    # except Stock.DoesNotExist:
+                    #     return Response(
+                    #         {"detail": f"Stock with id {stock_id} not found."},
+                    #         status=status.HTTP_404_NOT_FOUND,
+                    #     )
+                    # stock = Stock.objects.filter(id=stock_id).first()
+                    update_objs.append(item)
+                else:
+                    # If no 'id' is provided, prepare for creation
+                    serializer = self.get_serializer(data=item)
+                    if serializer.is_valid():
+                        create_objs.append(serializer.validated_data)
+                        response_data.append(serializer.data)
+                    else:
+                        return Response(
+                            serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+
+            # Bulk create new records (only items without an 'id')
+            if create_objs:
+                Stock.objects.bulk_create(
+                    [Stock(**data) for data in create_objs]
+                )
+
+            # Bulk update existing records (only items with an 'id')
+            if update_objs:
+                # Dynamically use field names from the first dictionary
+                Stock.objects.bulk_update(
+                    [Stock(**data) for data in update_objs], fields=field_names
+                )
+
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        # If the data is not an array, fall back to the default update behavior (single object)
+        return super().update(request, *args, **kwargs)
+
 
 # StockValue ViewSet
 class StockValueViewSet(viewsets.ModelViewSet):

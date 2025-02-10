@@ -35,6 +35,13 @@ from accounts.forms import CustomerRegistrationForm
 from accounts.models import Profile as Customer
 from accounts.serializers import ProfileSerializer as CustomerSerializer
 
+
+from django.core.mail import send_mail
+from .forms import CTAForm
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+
 User = get_user_model()
 
 default_token_generator = PasswordResetTokenGenerator()
@@ -267,9 +274,46 @@ class TransactionViewSet(viewsets.ModelViewSet):
         )
 
         # Define the S3 file name and upload
-        s3_file_name = f"/profiles/{instance.id}/{field_name}/{file.name}"  # Customize as needed
+        s3_file_name = (
+            f"/profiles/{instance.id}/{field_name}"  # Customize as needed
+        )
         s3.upload_fileobj(file, settings.AWS_STORAGE_BUCKET_NAME, s3_file_name)
 
         # Construct the S3 file URL
         s3_file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{s3_file_name}"
         return s3_file_url
+
+
+def cta_form_view(request):
+    if request.method == 'POST':
+        form = CTAForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+
+            # Email content for the admin
+            subject = "New CTA Form Submission"
+            email_body = render_to_string(
+                "contact_us.html", {**form.cleaned_data}
+            )
+            # Send email to the admin
+            send_mail(
+                subject,
+                email_body,
+                email,  # Sender's email (the visitor's email)
+                [settings.ADMIN_EMAIL],  # Recipient email (admin's email)
+                fail_silently=False,
+            )
+
+            return HttpResponse('Thank you for your submission!')
+        else:
+            return render(
+                request,
+                'cta_form.html',
+                {'form': form, 'error': 'Invalid form data!'},
+            )
+
+    # If GET request, display empty form
+    else:
+        form = CTAForm()
+
+    return render(request, 'cta_form.html', {'form': form})
