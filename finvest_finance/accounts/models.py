@@ -15,14 +15,16 @@ class Portfolio(models.Model):
     stock = models.ForeignKey(
         Stock, on_delete=models.CASCADE
     )  # ForeignKey to Stock
-    quantity = models.PositiveIntegerField(default=0)  # Quantity of the stock owned
+    quantity = models.PositiveIntegerField(
+        default=0
+    )  # Quantity of the stock owned
     purchase_price = models.DecimalField(
         max_digits=16, decimal_places=4
     )  # Price at which the stock was purchased
     date_of_purchase = models.DateField(blank=True)  # Date of purchase
 
     def __str__(self):
-        return f"{self.stock_name.stock_name} - {self.user.username}"  # Display stock name and username
+        return f"{self.stock.stock_name} - {self.user.username}"  # Display stock name and username
 
 
 class Transaction(models.Model):
@@ -44,8 +46,19 @@ class Transaction(models.Model):
     )  # Price at
     date_of_transaction = models.DateField(blank=True)  # Date of transaction
     transaction_type = models.CharField(max_length=4, choices=[('buy', 'sell')])
-    payment_screenshot = models.URLField(blank=True,null=True)
-    is_valid = models.BooleanField(default=False)
+    payment_screenshot = models.URLField(blank=True, null=True)
+    # is_valid = models.BooleanField(default=False)
+
+    TXN_STATUS_CHOICES = [
+        ('verification_pending', 'Verification Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=TXN_STATUS_CHOICES,
+        default='verification_pending',
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -63,9 +76,6 @@ class Profile(models.Model):
     is_verified = models.BooleanField(
         default=False
     )  # Whether the user is verified
-    demat_account = models.CharField(
-        max_length=20, unique=True, blank=True
-    )  # Demat Account Number
 
     pan_card_number = models.CharField(
         max_length=10, unique=True, blank=True, null=True
@@ -77,17 +87,22 @@ class Profile(models.Model):
         default=False
     )  # If PAN card is uploaded
 
-    aadhar_card_image = models.URLField(
+    demat_account = models.CharField(
+        max_length=20, unique=True, blank=True
+    )  # Demat Account Number
+    demat_acc_image = models.URLField(
         default="https://1.bp.blogspot.com/-jwvQnOCuftw/Xx2KtXfa-NI/AAAAAAAAECs/kJF4B2rSx8ED3qF9g4Puhf7EDL3p6t_5wCLcBGAsYHQ/s2048/aadhar.png"
     )
-    aadhar_card_validated = models.BooleanField(default=False)
+    demat_acc_validated = models.BooleanField(default=False)
 
     bank_statement_image = models.URLField(
         default="https://admeonline.com/wp-content/uploads/2018/07/How-to-get-SBI-account-statement_online-using-internet-banking.png"
     )
     bank_statement_validated = models.BooleanField(default=False)
 
-    total_investment = models.PositiveIntegerField(default=0)
+    total_investment = models.DecimalField(
+        default=0, decimal_places=2, max_digits=16
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

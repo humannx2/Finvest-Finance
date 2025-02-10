@@ -60,11 +60,27 @@ class Stock(models.Model):
         max_digits=20, decimal_places=2
     )  # Average traded price
 
+    lot_size = models.DecimalField(max_digits=20, decimal_places=2)
+    legal_name = models.CharField(max_length=255, blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    popular = models.BooleanField(default=False)
+    exclusive = models.BooleanField(default=False)
+    trending = models.BooleanField(default=False)
+    top_pick = models.BooleanField(default=False)
+
+    about = models.TextField(blank=True)
+
     def __str__(self):
         return f"Stock({self.isin})"
+
+
+# publish/ unpublish , exclusive, r
+# pan card, cancelled cheque, user demat w/ cml copy (w/ sorting)
+# reg date, name email , pan card, demat, total invested
+# transactions:- verified filter and sorted, validatio- verification_pending, confirmed, cancelled
 
 
 class StockValue(models.Model):
