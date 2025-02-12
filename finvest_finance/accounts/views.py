@@ -9,10 +9,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 
-from accounts.models import Portfolio, Transaction
+from accounts.models import Portfolio, Transaction, Profile
 from .serializers import (
     PortfolioSerializer,
     TransactionSerializer,
+    ProfileSerializer,
 )
 import boto3
 from django.conf import settings
@@ -317,3 +318,36 @@ def cta_form_view(request):
         form = CTAForm()
 
     return render(request, 'cta_form.html', {'form': form})
+
+
+# Profile ViewSet
+class ProfileViewSet(viewsets.ModelViewSet):
+    """ViewSet for handling CRUD operations for Portfolio."""
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def get_queryset(self):
+        queryset = Profile.objects.all()
+        sort_by = self.request.query_params.get('sort_by', None)
+        
+        if sort_by:
+            # Map frontend sort parameters to model fields
+            sort_mapping = {
+                'registration_date': 'created_at',  # Assuming your date field is called created_at
+                'name': 'user__first_name',  # Assuming name is in the related User model
+                'total_investment': 'total_investment'
+            }
+            
+            # Get the corresponding model field
+            sort_field = sort_mapping.get(sort_by)
+            
+            # Check if descending order is requested
+            order = self.request.query_params.get('order', 'asc')
+            if order == 'desc':
+                sort_field = f'-{sort_field}'
+                
+            if sort_field:
+                queryset = queryset.order_by(sort_field)
+        
+        return queryset

@@ -17,6 +17,7 @@ from rest_framework_simplejwt.views import (
 router = DefaultRouter()
 router.register(r'portfolios', PortfolioViewSet, basename='portfolio')
 router.register(r'transactions', TransactionViewSet, basename='transaction')
+router.register(r'profiles', ProfileViewSet, basename='profile')
 
 urlpatterns = [
     path("login/", login_view, name="login"),
