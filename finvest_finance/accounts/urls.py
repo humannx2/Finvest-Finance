@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from accounts.views import (
     PortfolioViewSet,
     TransactionViewSet,
+    ProfileViewSet,
     login_view,
     logout_view,
     register,

@@ -41,9 +41,13 @@ from django.core.mail import send_mail
 from .forms import CTAForm
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
 
 import json
 from django.db import models
+from datetime import date
+
 
 User = get_user_model()
 
@@ -329,40 +333,52 @@ class TransactionViewSet(viewsets.ModelViewSet):
         s3_file_url = f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{s3_file_name}"
         return s3_file_url
 
-
+@api_view(['POST'])
+@csrf_exempt
 def cta_form_view(request):
     if request.method == 'POST':
-        form = CTAForm(request.POST)
+        form = CTAForm(request.data)
         if form.is_valid():
             email = form.cleaned_data['email']
 
             # Email content for the admin
             subject = "New CTA Form Submission"
             email_body = render_to_string(
-                "contact_us.html", {**form.cleaned_data}
+                "contact_us.html", 
+                {
+                    **form.cleaned_data, 
+                    'logo_url': 'https://example.com/logo.png',
+                    "submission_date": date.today().strftime("%d-%m-%Y")
+                }
             )
-            # Send email to the admin
-            send_mail(
-                subject,
-                email_body,
-                email,  # Sender's email (the visitor's email)
-                [settings.ADMIN_EMAIL],  # Recipient email (admin's email)
-                fail_silently=False,
-            )
-
-            return HttpResponse('Thank you for your submission!')
+            
+            try:
+                # Send email to the admin
+                send_mail(
+                    subject,
+                    email_body,
+                    email,  # Sender's email (the visitor's email)
+                    [settings.EMAIL_HOST_USER],  # Recipient email (admin's email)
+                    fail_silently=False,
+                )
+                return Response(
+                    {'message': 'Thank you for your submission!'}, 
+                    status=status.HTTP_201_CREATED
+                )
+            except Exception as e:
+                print(e)            
+                return Response(
+                    {'error': 'Failed to send email'}, 
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
         else:
-            return render(
-                request,
-                'cta_form.html',
-                {'form': form, 'error': 'Invalid form data!'},
+            return Response(
+                {'errors': form.errors}, 
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-    # If GET request, display empty form
-    else:
-        form = CTAForm()
-
-    return render(request, 'cta_form.html', {'form': form})
+    # If GET request, return success status
+    return Response(status=status.HTTP_200_OK)
 
 
 # Profile ViewSet

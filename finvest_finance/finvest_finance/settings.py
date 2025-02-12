@@ -30,7 +30,7 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['65.0.19.220']
+ALLOWED_HOSTS = ['65.0.19.220','localhost','127.0.0.1']
 
 
 # Application definition
@@ -139,3 +139,11 @@ AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider's SMTP server
+EMAIL_PORT = 587  # For TLS
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'faangfinvest1@gmail.com'  # Your email address
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Your email password
+DEFAULT_FROM_EMAIL = 'faangfinvest1@gmail.com'  # Default sender email
