@@ -42,6 +42,7 @@ from .forms import CTAForm
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 
+import json
 
 User = get_user_model()
 
@@ -217,6 +218,40 @@ class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
 
+    def get_queryset(self):
+        queryset = Transaction.objects.all()
+        sort_param = self.request.query_params.get('sort', None)
+        
+        if sort_param:
+            try:
+                # Parse the JSON string
+                sort_dict = json.loads(sort_param)
+                
+                # Map frontend sort parameters to model fields
+                sort_mapping = {
+                    'date_of_transaction': 'date_of_transaction',
+                    'stock': 'stock',
+                    'purchase_price': 'purchase_price'
+                }
+                
+                # Create ordering list
+                ordering = []
+                for field, order in sort_dict.items():
+                    if field in sort_mapping:
+                        sort_field = sort_mapping[field]
+                        if order.lower() == 'desc':
+                            sort_field = f'-{sort_field}'
+                        ordering.append(sort_field)
+                
+                if ordering:
+                    queryset = queryset.order_by(*ordering)
+                    
+            except json.JSONDecodeError:
+                # Handle invalid JSON gracefully
+                pass
+        
+        return queryset
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -329,25 +364,34 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Profile.objects.all()
-        sort_by = self.request.query_params.get('sort_by', None)
+        sort_param = self.request.query_params.get('sort', None)
         
-        if sort_by:
-            # Map frontend sort parameters to model fields
-            sort_mapping = {
-                'registration_date': 'created_at',  # Assuming your date field is called created_at
-                'name': 'user__first_name',  # Assuming name is in the related User model
-                'total_investment': 'total_investment'
-            }
-            
-            # Get the corresponding model field
-            sort_field = sort_mapping.get(sort_by)
-            
-            # Check if descending order is requested
-            order = self.request.query_params.get('order', 'asc')
-            if order == 'desc':
-                sort_field = f'-{sort_field}'
+        if sort_param:
+            try:
+                # Parse the JSON string
+                sort_dict = json.loads(sort_param)
                 
-            if sort_field:
-                queryset = queryset.order_by(sort_field)
+                # Map frontend sort parameters to model fields
+                sort_mapping = {
+                    'registration_date': 'created_at',
+                    'name': 'user__first_name',
+                    'total_investment': 'total_investment'
+                }
+                
+                # Create ordering list
+                ordering = []
+                for field, order in sort_dict.items():
+                    if field in sort_mapping:
+                        sort_field = sort_mapping[field]
+                        if order.lower() == 'desc':
+                            sort_field = f'-{sort_field}'
+                        ordering.append(sort_field)
+                
+                if ordering:
+                    queryset = queryset.order_by(*ordering)
+                    
+            except json.JSONDecodeError:
+                # Handle invalid JSON gracefully
+                pass
         
         return queryset
