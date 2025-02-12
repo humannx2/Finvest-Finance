@@ -125,6 +125,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from stocks.models import Stock, StockValue
 from stocks.serializers import StockSerializer, StockValueSerializer
+from django.db import models
 
 
 # Stock ViewSet
@@ -133,6 +134,21 @@ class StockViewSet(viewsets.ModelViewSet):
 
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        search_query = self.request.query_params.get('q', None)
+        
+        # Add search functionality
+        if search_query:
+            queryset = queryset.filter(
+                models.Q(isin=search_query) |
+                models.Q(stock_name__icontains=search_query) |
+                models.Q(stock_symbol=search_query) |
+                models.Q(legal_name__icontains=search_query) |
+                models.Q(sector__icontains=search_query) 
+            )
+        return queryset
 
     def update(self, request, *args, **kwargs):
         # Check if the request data contains an array of dictionaries (for bulk update)

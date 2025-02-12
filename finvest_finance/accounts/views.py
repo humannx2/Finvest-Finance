@@ -43,6 +43,7 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 
 import json
+from django.db import models
 
 User = get_user_model()
 
@@ -221,6 +222,15 @@ class TransactionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Transaction.objects.all()
         sort_param = self.request.query_params.get('sort', None)
+        search_query = self.request.query_params.get('q', None)
+        
+        # Add search functionality
+        if search_query:
+            queryset = queryset.filter(
+                models.Q(user__first_name__icontains=search_query) |
+                models.Q(stock__stock_name__icontains=search_query) |
+                models.Q(payment_id__startswith=search_query)
+            )
         
         if sort_param:
             try:
@@ -365,6 +375,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Profile.objects.all()
         sort_param = self.request.query_params.get('sort', None)
+        search_query = self.request.query_params.get('q', None)
+        
+        # Add search functionality
+        if search_query:
+            queryset = queryset.filter(
+                models.Q(name__icontains=search_query) |
+                models.Q(pan_card_number__icontains=search_query) |
+                models.Q(demat_account__icontains=search_query)
+            )
         
         if sort_param:
             try:
