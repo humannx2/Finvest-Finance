@@ -276,6 +276,43 @@ class TransactionViewSet(viewsets.ModelViewSet):
         # Save the instance
         self.perform_create(serializer)
 
+        # Send confirmation email
+        try:
+            user = serializer.validated_data['user']
+            stock = serializer.validated_data['stock']
+            
+            context = {
+                'user_name': getattr(user, "first_name", ""),
+                'share_name': stock.stock_name,
+                'order_date': serializer.validated_data['date_of_transaction'],
+                'transaction_type': serializer.validated_data['transaction_type'],
+                'qty': serializer.validated_data['quantity'],
+                'price': serializer.validated_data['purchase_price'],
+                'total_amount': serializer.validated_data['purchase_price'] * serializer.validated_data['quantity'],
+                'payment_id': serializer.validated_data['payment_id'],
+                'status': serializer.validated_data['status'],
+                'whatsapp_link': 'https://wa.me/8377081003',
+                'website_url': 'https://www.faanfinvest.com',
+                'unsubscribe_link': '#',
+                'logo_url': 'https://example.com/logo.png',
+            }
+
+            # Render email template
+            email_body = render_to_string('transaction_confirmation.html', context)
+            
+            # Send email
+            send_mail(
+                subject="Transaction Confirmation",
+                message="",
+                html_message=email_body,
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            # Log the error but don't prevent transaction creation
+            print(f"Failed to send transaction confirmation email: {str(e)}")
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
@@ -379,7 +416,6 @@ def cta_form_view(request):
 
     # If GET request, return success status
     return Response(status=status.HTTP_200_OK)
-
 
 # Profile ViewSet
 class ProfileViewSet(viewsets.ModelViewSet):
